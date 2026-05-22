@@ -27,8 +27,12 @@ export default {
 async function authenticate({ email, password, ipAddress }: any) {
   const account = await db.Account.scope('withHash').findOne({ where: { email } });
 
-  if (!account || !account.isVerified || !(await bcrypt.compare(password, account.passwordHash))) {
+  if (!account || !(await bcrypt.compare(password, account.passwordHash))) {
     throw 'Email or password is incorrect';
+  }
+
+  if (!account.isVerified) {
+    throw 'Account is not verified, please check your email for verification instructions';
   }
 
   const jwtToken = generateJwtToken(account);
@@ -189,8 +193,14 @@ async function hash(password: any) {
 }
 
 function generateJwtToken(account: any) {
-  const secret = process.env.JWT_SECRET || 'SUPER_SECRET_KEY_CHANGE_IN_PRODUCTION';
+  const secret = getJwtSecret();
   return jwt.sign({ sub: account.id, id: account.id }, secret, { expiresIn: '15m' });
+}
+
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_SECRET environment variable is required');
+  return secret;
 }
 
 function generateRefreshToken(account: any, ipAddress: any) {

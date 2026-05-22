@@ -6,7 +6,8 @@ export default function authorize(roles: any = []) {
     roles = [roles];
   }
 
-  const secret = process.env.JWT_SECRET || 'SUPER_SECRET_KEY_CHANGE_IN_PRODUCTION';
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_SECRET environment variable is required');
 
   return [
     expressjwt({ secret, algorithms: ['HS256'] }),
