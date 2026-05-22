@@ -2,5 +2,5 @@
 // e.g. apiUrl: 'https://your-backend.onrender.com'
 export const environment = {
     production: true,
-    apiUrl: 'https://YOUR_BACKEND_URL_HERE'
+    apiUrl: 'https://the-final-intprogs.onrender.com'
 };

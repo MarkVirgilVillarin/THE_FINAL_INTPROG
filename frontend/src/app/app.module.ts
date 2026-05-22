@@ -42,7 +42,7 @@ import { HomeComponent } from './home';
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
 
         // ── STAGE A: Fake Backend (comment out for Stage B / real backend) ──
-        fakeBackendProvider
+        //fakeBackendProvider
         // ────────────────────────────────────────────────────────────────────
     ],
     bootstrap: [AppComponent]
