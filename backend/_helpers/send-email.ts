@@ -15,5 +15,5 @@ export default async function sendEmail({ to, subject, html, from }: any) {
 } as any);
 
   const info = await transporter.sendMail({ from: emailFrom, to, subject, html });
-  console.log('Email sent. Preview URL:', nodemailer.getTestMessageUrl(info));
+  console.log('Email sent. Preview URL:', nodemailer.getTestMessageUrl(info as any));
 }
