@@ -1,0 +1,9 @@
+<div class="card-body">
+    <h4 class="card-title">Verify Email</h4>
+    <div *ngIf="emailStatus === TokenStatus.Verifying">
+        Verifying your email, please wait...
+    </div>
+    <div *ngIf="emailStatus === TokenStatus.Failed" class="alert alert-danger">
+        Verification failed, you can also verify your account using the <a routerLink="../forgot-password">forgot password</a> page.
+    </div>
+</div>
