@@ -105,7 +105,7 @@ async function forgotPassword({ email }: any, origin: any) {
   account.resetToken = randomTokenString();
   account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await account.save();
-  sendEmailInBackground(sendPasswordResetEmail(account, origin));
+  await sendPasswordResetEmail(account, origin);
 }
 
 async function validateResetToken({ token }: any) {
@@ -124,6 +124,7 @@ async function resetPassword({ token, password }: any) {
   account.passwordHash = await hash(password);
   account.passwordReset = Date.now();
   account.resetToken = null;
+  account.resetTokenExpires = null;
   await account.save();
 }
 

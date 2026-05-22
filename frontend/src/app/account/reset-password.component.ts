@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators';
 
 import { AccountService, AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
@@ -16,7 +16,7 @@ enum TokenStatus {
 export class ResetPasswordComponent implements OnInit {
     TokenStatus = TokenStatus;
     tokenStatus = TokenStatus.Validating;
-    token?: string;
+    token = '';
     form!: UntypedFormGroup;
     loading = false;
     submitted = false;
@@ -31,10 +31,7 @@ export class ResetPasswordComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.token = this.route.snapshot.queryParams['token'];
-
-        // remove token from url to prevent http referer leakage
-        this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
+        this.token = this.route.snapshot.queryParams['token'] || '';
 
         this.form = this.formBuilder.group({
             password: ['', [Validators.required, Validators.minLength(6)]],
@@ -43,8 +40,16 @@ export class ResetPasswordComponent implements OnInit {
             validators: MustMatch('password', 'confirmPassword')
         });
 
+        if (!this.token) {
+            this.tokenStatus = TokenStatus.Invalid;
+            return;
+        }
+
+        // remove token from url to prevent http referer leakage after storing it in memory
+        this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
+
         // validate token
-        this.accountService.validateResetToken(this.token!)
+        this.accountService.validateResetToken(this.token)
             .pipe(first())
             .subscribe({
                 next: () => {
@@ -70,8 +75,9 @@ export class ResetPasswordComponent implements OnInit {
         }
 
         this.loading = true;
-        this.accountService.resetPassword(this.token!, this.f['password'].value, this.f['confirmPassword'].value)
+        this.accountService.resetPassword(this.token, this.f['password'].value, this.f['confirmPassword'].value)
             .pipe(first())
+            .pipe(finalize(() => this.loading = false))
             .subscribe({
                 next: () => {
                     this.alertService.success('Password reset successful, you can now login', { keepAfterRouteChange: true });
@@ -79,7 +85,7 @@ export class ResetPasswordComponent implements OnInit {
                 },
                 error: error => {
                     this.error = error;
-                    this.loading = false;
+                    this.alertService.error(error);
                 }
             });
     }
