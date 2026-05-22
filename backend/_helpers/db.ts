@@ -25,8 +25,14 @@ async function initialize() {
     host,
     port,
     dialect: 'mysql',
-    logging: process.env.NODE_ENV !== 'production' ? console.log : false
-  });
+    logging: process.env.NODE_ENV !== 'production' ? console.log : false,
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
+});
 
   // Init models
   db.Account      = accountModel(sequelize);
