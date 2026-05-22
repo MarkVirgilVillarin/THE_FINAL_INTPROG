@@ -112,7 +112,7 @@ async function validateResetToken({ token }: any) {
   const account = await db.Account.findOne({
     where: {
       resetToken: token,
-      resetTokenExpires: { [Op.gt]: Date.now() }
+      resetTokenExpires: { [Op.gt]: new Date() }
     }
   });
   if (!account) throw 'Invalid token';
@@ -122,7 +122,7 @@ async function validateResetToken({ token }: any) {
 async function resetPassword({ token, password }: any) {
   const account = await validateResetToken({ token });
   account.passwordHash = await hash(password);
-  account.passwordReset = Date.now();
+  account.passwordReset = new Date();
   account.resetToken = null;
   account.resetTokenExpires = null;
   await account.save();
