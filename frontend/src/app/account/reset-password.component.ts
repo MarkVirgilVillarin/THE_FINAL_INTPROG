@@ -45,20 +45,10 @@ export class ResetPasswordComponent implements OnInit {
             return;
         }
 
+        this.tokenStatus = TokenStatus.Valid;
+
         // remove token from url to prevent http referer leakage after storing it in memory
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
-
-        // validate token
-        this.accountService.validateResetToken(this.token)
-            .pipe(first(), timeout(30000))
-            .subscribe({
-                next: () => {
-                    this.tokenStatus = TokenStatus.Valid;
-                },
-                error: () => {
-                    this.tokenStatus = TokenStatus.Invalid;
-                }
-            });
     }
 
     get f() { return this.form.controls; }
