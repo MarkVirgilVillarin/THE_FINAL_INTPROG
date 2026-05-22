@@ -68,7 +68,8 @@ async function revokeToken({ token, ipAddress }: any) {
 
 async function register(params: any, origin: any) {
   if (await db.Account.findOne({ where: { email: params.email } })) {
-    return await sendAlreadyRegisteredEmail(params.email, origin);
+    sendEmailInBackground(sendAlreadyRegisteredEmail(params.email, origin));
+    return;
   }
 
   const account = new db.Account(params);
@@ -79,7 +80,7 @@ async function register(params: any, origin: any) {
   account.passwordHash = await hash(params.password);
 
   await account.save();
-  await sendVerificationEmail(account, origin);
+  sendEmailInBackground(sendVerificationEmail(account, origin));
 }
 
 async function verifyEmail({ token }: any) {
@@ -100,7 +101,7 @@ async function forgotPassword({ email }: any, origin: any) {
   account.resetToken = randomTokenString();
   account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await account.save();
-  await sendPasswordResetEmail(account, origin);
+  sendEmailInBackground(sendPasswordResetEmail(account, origin));
 }
 
 async function validateResetToken({ token }: any) {
@@ -208,6 +209,12 @@ function randomTokenString() {
 function basicDetails(account: any) {
   const { id, title, firstName, lastName, email, role, created, updated, isVerified } = account;
   return { id, title, firstName, lastName, email, role, created, updated, isVerified };
+}
+
+function sendEmailInBackground(emailTask: Promise<void>) {
+  emailTask.catch(error => {
+    console.error('Email failed:', error);
+  });
 }
 
 async function sendVerificationEmail(account: any, origin: any) {
