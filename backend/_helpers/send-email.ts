@@ -2,11 +2,15 @@ import nodemailer from 'nodemailer';
 
 export default async function sendEmail({ to, subject, html, from }: any) {
   const emailFrom = from || process.env.EMAIL_FROM || 'info@node-mysql-api.com';
+  const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
+  const smtpSecure = process.env.SMTP_SECURE
+    ? process.env.SMTP_SECURE === 'true'
+    : smtpPort === 465;
 
   const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: false,
+  port: smtpPort,
+  secure: smtpSecure,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
