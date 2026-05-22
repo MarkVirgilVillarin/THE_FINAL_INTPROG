@@ -2,11 +2,12 @@
 
 Node.js + TypeScript + MySQL backend with Angular 21 frontend.
 
+
 ## Live Links
 
-- Frontend: (paste your deployed frontend URL here)
-- Backend API: (paste your deployed backend URL here)
-- Swagger Docs: (paste your deployed backend URL here, then add /api-docs)
+- Frontend: https://final-intprog-frontend-s55p.onrender.com
+- Backend API: https://the-final-intprogs.onrender.com
+- Swagger Docs: https://the-final-intprogs.onrender.com/api-docs
 
 ---
 
