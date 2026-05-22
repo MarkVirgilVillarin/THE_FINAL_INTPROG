@@ -5,13 +5,16 @@ export default async function sendEmail({ to, subject, html, from }: any) {
 
   const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-  port: parseInt(process.env.SMTP_PORT || '465', 10),
-  secure: true,
+  port: parseInt(process.env.SMTP_PORT || '587', 10),
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
   },
-  tls: { rejectUnauthorized: false }
+  tls: { rejectUnauthorized: false },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 } as any);
 
   const info = await transporter.sendMail({ from: emailFrom, to, subject, html });
