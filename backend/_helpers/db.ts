@@ -16,9 +16,12 @@ async function initialize() {
   const database = process.env.DB_NAME     || 'node_mysql_api';
 
   // Create DB if it doesn't exist
-  const connection = await mysql.createConnection({ host, port, user, password });
-  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-  await connection.end();
+  const connection = await mysql.createConnection({ 
+  host, port, user, password,
+  ssl: { rejectUnauthorized: false }
+});
+await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+await connection.end();
 
   // Connect via Sequelize
   const sequelize = new Sequelize(database, user, password, {
