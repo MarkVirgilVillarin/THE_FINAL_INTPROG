@@ -6,8 +6,8 @@ Node.js + TypeScript + MySQL backend with Angular 21 frontend.
 ## Live Links
 
 - Frontend: https://final-intprog-frontend-s55p.onrender.com
-- Backend API: https://the-final-intprogs.onrender.com
-- Swagger Docs: https://the-final-intprogs.onrender.com/api-docs
+- Backend API: https://thefinalintprog-production.up.railway.app
+- Swagger Docs: https://thefinalintprog-production.up.railway.app/api-docs
 
 ---
 
