@@ -1,4 +1,3 @@
-import mysql from 'mysql2/promise';
 import { Sequelize } from 'sequelize';
 import accountModel from '../accounts/account.model';
 import refreshTokenModel from '../accounts/refresh-token.model';
@@ -15,20 +14,18 @@ async function initialize() {
   const password = process.env.DB_PASSWORD || '';
   const database = process.env.DB_NAME     || 'node_mysql_api';
 
-  // Create DB if it doesn't exist
-  const connection = await mysql.createConnection({ 
-  host, port, user, password,
-  ssl: { rejectUnauthorized: false }
-});
-await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-await connection.end();
-
   // Connect via Sequelize
   const sequelize = new Sequelize(database, user, password, {
     host,
     port,
     dialect: 'mysql',
     logging: process.env.NODE_ENV !== 'production' ? console.log : false,
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX || '2', 10),
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    },
     dialectOptions: {
         ssl: {
             require: true,
